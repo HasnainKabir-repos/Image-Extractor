@@ -4,6 +4,34 @@ A REST API for extracting text from images using **Flask** and **Google Cloud Vi
 
 The API accepts JPG, JPEG, and PNG images, validates the uploaded file, extracts image metadata, performs OCR, and returns the result as JSON.
 
+## 🚀 Live Deployment
+
+Set the Cloud Run URL:
+
+```powershell
+$SERVICE_URL = "https://image-extractor-863275486443.asia-south1.run.app"
+```
+
+## Health Check
+
+```powershell
+Invoke-RestMethod `
+    -Uri "$SERVICE_URL/health" `
+    -Method Get
+```
+
+## OCR Request
+
+```powershell
+Invoke-RestMethod `
+    -Uri "$SERVICE_URL/extract-text" `
+    -Method Post `
+    -Form @{
+        image = Get-Item ".\images\test_image_1.jpg"
+    }
+```
+
+---
 ## Features
 
 - OCR text extraction using Google Cloud Vision API
