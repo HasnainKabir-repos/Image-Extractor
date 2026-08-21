@@ -6,10 +6,13 @@ from app.utils.validators import (
     is_valid_image
 )
 from app.services.ocr_service import extract_text_from_image
+from app.services.image_service import extract_image_metadata
+from app.extensions import limiter
 
 ocr_bp = Blueprint('ocr', __name__)
 
 @ocr_bp.route("/extract-text", methods=["POST"])
+@limiter.limit("20 per hour")
 def extract_text():
 
     if "image" not in request.files:
@@ -58,6 +61,7 @@ def extract_text():
     try:
         start_time = time.perf_counter()
         ocr_result = extract_text_from_image(image_bytes)
+        image_metadata = extract_image_metadata(image_bytes)
 
         processing_time_ms = round(
             (time.perf_counter() - start_time) * 1000
@@ -79,5 +83,6 @@ def extract_text():
         "message": "Image validation successful",
         "confidence": ocr_result["confidence"],
         "processing_time_ms": processing_time_ms,
-        "text": ocr_result["text"]
+        "text": ocr_result["text"],
+        "image_metadata": image_metadata
     }, 200

@@ -1,3 +1,4 @@
 class Config:
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10 MB
-    ALLOWED_EXTENSIONS = {"jpg", "jpeg", "jfif"}
+    ALLOWED_EXTENSIONS = {"jpg", "jpeg", "jfif", "png"}
+    RATELIMIT_DEFAULT = "20 per hour"
