@@ -12,12 +12,24 @@ Set the Cloud Run URL:
 $SERVICE_URL = "https://image-extractor-863275486443.asia-south1.run.app"
 ```
 
+### Linux (Bash)
+
+```bash
+export SERVICE_URL="https://image-extractor-863275486443.asia-south1.run.app"
+```
+
 ## Health Check
 
 ```powershell
 Invoke-RestMethod `
     -Uri "$SERVICE_URL/health" `
     -Method Get
+```
+
+### Linux (Bash)
+
+```bash
+curl "$SERVICE_URL/health"
 ```
 
 ## OCR Request
@@ -29,6 +41,14 @@ Invoke-RestMethod `
     -Form @{
         image = Get-Item ".\images\test_image_1.jpg"
     }
+```
+
+### Linux (Bash)
+
+```bash
+curl -X POST \
+  -F "image=@images/test_image_1.jpg" \
+  "$SERVICE_URL/extract-text"
 ```
 
 ---
@@ -133,6 +153,14 @@ git clone https://github.com/YOUR_USERNAME/image-extractor.git
 cd image-extractor
 ```
 
+Linux (Bash):
+
+```bash
+git clone https://github.com/YOUR_USERNAME/image-extractor.git
+
+cd image-extractor
+```
+
 Replace `YOUR_USERNAME` with your GitHub username.
 
 ---
@@ -149,11 +177,23 @@ Activate it:
 .\.venv\Scripts\Activate.ps1
 ```
 
+Linux (Bash):
+
+```bash
+source .venv/bin/activate
+```
+
 ---
 
 ## 3. Install dependencies
 
 ```powershell
+pip install -r requirements.txt
+```
+
+Linux (Bash):
+
+```bash
 pip install -r requirements.txt
 ```
 
@@ -167,11 +207,23 @@ pip install -r requirements.txt
 gcloud init
 ```
 
+Linux (Bash):
+
+```bash
+gcloud init
+```
+
 Select the Google Cloud project that will be used for the application.
 
 Verify the active project:
 
 ```powershell
+gcloud config get-value project
+```
+
+Linux (Bash):
+
+```bash
 gcloud config get-value project
 ```
 
@@ -187,6 +239,16 @@ gcloud services enable `
     artifactregistry.googleapis.com
 ```
 
+Linux (Bash):
+
+```bash
+gcloud services enable \
+  vision.googleapis.com \
+  run.googleapis.com \
+  cloudbuild.googleapis.com \
+  artifactregistry.googleapis.com
+```
+
 ---
 
 ## 3. Configure Application Default Credentials
@@ -197,9 +259,21 @@ For local development:
 gcloud auth application-default login
 ```
 
+Linux (Bash):
+
+```bash
+gcloud auth application-default login
+```
+
 Verify that credentials work:
 
 ```powershell
+gcloud auth application-default print-access-token
+```
+
+Linux (Bash):
+
+```bash
 gcloud auth application-default print-access-token
 ```
 
@@ -214,6 +288,12 @@ The Google Cloud Vision Python SDK will automatically discover these credentials
 Start the Flask application:
 
 ```powershell
+python run.py
+```
+
+Linux (Bash):
+
+```bash
 python run.py
 ```
 
@@ -241,6 +321,12 @@ GET /health
 Invoke-RestMethod `
     -Uri "http://127.0.0.1:5000/health" `
     -Method Get
+```
+
+### Linux (Bash)
+
+```bash
+curl "http://127.0.0.1:5000/health"
 ```
 
 ### Example Response
@@ -297,6 +383,14 @@ Invoke-RestMethod `
     -Form @{
         image = Get-Item ".\images\test_image_1.jpg"
     }
+```
+
+### Linux (Bash)
+
+```bash
+curl -X POST \
+  -F "image=@images/test_image_1.jpg" \
+  "http://127.0.0.1:5000/extract-text"
 ```
 
 ---
@@ -474,6 +568,12 @@ Run the test suite:
 pytest -v
 ```
 
+Linux (Bash):
+
+```bash
+pytest -v
+```
+
 The tests cover:
 
 - Health endpoint
@@ -499,6 +599,12 @@ From the project root:
 docker build -t image-extractor .
 ```
 
+Linux (Bash):
+
+```bash
+docker build -t image-extractor .
+```
+
 ---
 
 ## Run Locally
@@ -511,6 +617,16 @@ docker run --rm `
     -v "$env:APPDATA\gcloud\application_default_credentials.json:/tmp/adc.json:ro" `
     -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/adc.json `
     image-extractor
+```
+
+Linux (Bash):
+
+```bash
+docker run --rm \
+  -p 8080:8080 \
+  -v "$HOME/.config/gcloud/application_default_credentials.json:/tmp/adc.json:ro" \
+  -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/adc.json \
+  image-extractor
 ```
 
 The API will be available at:
@@ -529,6 +645,12 @@ Invoke-RestMethod `
     -Method Get
 ```
 
+### Linux (Bash)
+
+```bash
+curl "http://localhost:8080/health"
+```
+
 ---
 
 ## Test OCR Inside Docker
@@ -542,6 +664,14 @@ Invoke-RestMethod `
     }
 ```
 
+### Linux (Bash)
+
+```bash
+curl -X POST \
+  -F "image=@images/test_image_1.jpg" \
+  "http://localhost:8080/extract-text"
+```
+
 ---
 
 # Deploy to Google Cloud Run
@@ -552,9 +682,21 @@ Invoke-RestMethod `
 gcloud config get-value project
 ```
 
+Linux (Bash):
+
+```bash
+gcloud config get-value project
+```
+
 If needed:
 
 ```powershell
+gcloud config set project YOUR_PROJECT_ID
+```
+
+Linux (Bash):
+
+```bash
 gcloud config set project YOUR_PROJECT_ID
 ```
 
@@ -570,6 +712,16 @@ gcloud services enable `
     vision.googleapis.com
 ```
 
+Linux (Bash):
+
+```bash
+gcloud services enable \
+  run.googleapis.com \
+  cloudbuild.googleapis.com \
+  artifactregistry.googleapis.com \
+  vision.googleapis.com
+```
+
 ---
 
 ## 3. Deploy from Source
@@ -581,6 +733,15 @@ gcloud run deploy image-extractor `
     --source . `
     --region asia-south1 `
     --allow-unauthenticated
+```
+
+Linux (Bash):
+
+```bash
+gcloud run deploy image-extractor \
+  --source . \
+  --region asia-south1 \
+  --allow-unauthenticated
 ```
 
 During the first deployment, Google Cloud may ask to create an Artifact Registry repository.
@@ -619,12 +780,24 @@ Set the Cloud Run URL:
 $SERVICE_URL = "https://image-extractor-863275486443.asia-south1.run.app"
 ```
 
+### Linux (Bash)
+
+```bash
+export SERVICE_URL="https://image-extractor-863275486443.asia-south1.run.app"
+```
+
 ## Health Check
 
 ```powershell
 Invoke-RestMethod `
     -Uri "$SERVICE_URL/health" `
     -Method Get
+```
+
+### Linux (Bash)
+
+```bash
+curl "$SERVICE_URL/health"
 ```
 
 ## OCR Request
@@ -636,6 +809,14 @@ Invoke-RestMethod `
     -Form @{
         image = Get-Item ".\images\test_image_1.jpg"
     }
+```
+
+### Linux (Bash)
+
+```bash
+curl -X POST \
+  -F "image=@images/test_image_1.jpg" \
+  "$SERVICE_URL/extract-text"
 ```
 
 ---
